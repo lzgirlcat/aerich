@@ -79,4 +79,4 @@ where c.table_catalog = $1
         return columns
     
     def array_field(self, **kwargs):
-        return "{name} = ArrayField({data_type}{default}{comment})".format(**kwargs)
+        return "{name} = ArrayField({element_type}{default}{comment})".format(**kwargs)

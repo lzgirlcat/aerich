@@ -60,8 +60,10 @@ class Column(BaseModel):
 
         if self.comment:
             comment = f"description='{self.comment}', "
+        
+        element_type = f'element_type="{self.data_type.replace("_", "")}", '
+
         return {
-            "data_type": self.data_type.replace('_', ''),
             "name": self.name,
             "pk": pk,
             "index": index,
@@ -69,6 +71,7 @@ class Column(BaseModel):
             "default": default,
             "length": length,
             "comment": comment,
+            "element_type": element_type,
         }
 
 
