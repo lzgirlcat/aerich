@@ -61,6 +61,7 @@ class Column(BaseModel):
         if self.comment:
             comment = f"description='{self.comment}', "
         return {
+            "data_type": self.data_type.replace('_', ''),
             "name": self.name,
             "pk": pk,
             "index": index,
@@ -97,7 +98,8 @@ class Inspect:
             model = self._table_template.format(table=table.title().replace("_", ""))
             for column in columns:
                 field = self.field_map[column.data_type](**column.translate())
-                fields.append("    " + field)
+                cleaned_fields = field.replace(', )', ')')
+                fields.append("    " + cleaned_fields)
             tables.append(model + "\n".join(fields))
         return result + "\n\n\n".join(tables)
 
@@ -166,3 +168,7 @@ class Inspect:
     @classmethod
     def binary_field(cls, **kwargs) -> str:
         return "{name} = fields.BinaryField({null}{default}{comment})".format(**kwargs)
+
+    @classmethod
+    def datetime_field(cls, **kwargs) -> str:
+        return "{name} = fields.DatetimeField({null}{default}{comment})".format(**kwargs)

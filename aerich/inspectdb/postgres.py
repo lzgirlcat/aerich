@@ -12,7 +12,7 @@ class InspectPostgres(Inspect):
 
     @property
     def field_map(self) -> dict:
-        return {
+        fields = {
             "int4": self.int_field,
             "int8": self.int_field,
             "smallint": self.smallint_field,
@@ -31,7 +31,10 @@ class InspectPostgres(Inspect):
             "bytea": self.binary_field,
             "bool": self.bool_field,
             "timestamp": self.datetime_field,
+            "bpchar": self.char_field
         }
+        array_fields = {f'_{k}': self.array_field for k in fields.keys()}
+        return {**fields, **array_fields}
 
     async def get_all_tables(self) -> List[str]:
         sql = "select TABLE_NAME from information_schema.TABLES where table_catalog=$1 and table_schema=$2"
@@ -74,3 +77,6 @@ where c.table_catalog = $1
                 )
             )
         return columns
+    
+    def array_field(self, **kwargs):
+        return "{name} = ArrayField({data_type}{default}{comment})".format(**kwargs)
